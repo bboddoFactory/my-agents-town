@@ -24,6 +24,11 @@ Prove that a web page can send one message to a CLI coding agent and show the re
 
 The first target is Codex CLI. The runner shape is kept generic enough to add OpenCode, Claude Code, or OpenClaw later.
 
+For the broader direction and milestone context, read:
+
+- [Agent Orchestration Direction](../../docs/agent-orchestration-direction.md)
+- [Agent Chat POC Milestones](../../docs/agent-chat-poc-milestones.md)
+
 ## Non-Goals
 
 - No persistent agent session yet.
@@ -151,4 +156,3 @@ E. Remote server workflow over Tailscale
 - Does one-shot mode preserve enough context for small tasks?
 - What is the right persistent session method later: pty, tmux, or agent-native session?
 - Should long jobs become a job queue before file edits get larger?
-
