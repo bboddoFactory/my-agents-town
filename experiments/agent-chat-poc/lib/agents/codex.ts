@@ -20,6 +20,7 @@ export async function runCodex(
       cwd: request.cwd,
       env: process.env,
       shell: false,
+      stdio: ["ignore", "pipe", "pipe"],
     });
 
     const timer = setTimeout(() => {
@@ -107,4 +108,3 @@ function parseArgs(value: string): string[] {
   if (current) args.push(current);
   return args;
 }
-

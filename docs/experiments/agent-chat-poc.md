@@ -31,7 +31,7 @@ The POC worked.
 Verified over Tailscale at:
 
 ```text
-http://100.102.93.112:3000
+http://<tailscale-ip>:3000
 ```
 
 The UI showed:
@@ -124,3 +124,23 @@ The next useful step is artifact handoff:
       v
 [Main orchestrator summarizes]
 ```
+
+## Artifact Handoff Update
+
+The POC now writes task and result artifacts for each run:
+
+```text
+experiments/agent-chat-poc/artifacts/tasks/task-*/
+  task.md
+  result.md
+```
+
+The API response and debug panel show:
+
+- `taskPath`
+- `resultPath`
+- `resultWritten`
+- `handoffComplete`
+
+This is still only a simple debug display. The full artifact viewer remains a
+later backlog item.
