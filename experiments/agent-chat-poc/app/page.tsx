@@ -15,10 +15,31 @@ type AgentRunResult = {
   timeoutMs: number;
 };
 
+type TaskArtifact = {
+  id: string;
+  taskDir: string;
+  taskPath: string;
+  resultPath: string;
+};
+
+type ResultArtifactStatus = {
+  path: string;
+  written: boolean;
+  sizeBytes: number | null;
+  content: string | null;
+};
+
+type RunArtifacts = {
+  task: TaskArtifact;
+  result: ResultArtifactStatus;
+  handoffComplete: boolean;
+};
+
 type ChatResponse = {
   message: string;
   finalPrompt: string;
   result: AgentRunResult;
+  artifacts: RunArtifacts;
 };
 
 type ChatMessage = {
@@ -31,6 +52,13 @@ const examples = [
   "Summarize the files in this sandbox.",
   "Add one todo item to todo.md saying this POC can edit files.",
 ];
+
+function createMessageId() {
+  return (
+    globalThis.crypto?.randomUUID?.() ??
+    `${Date.now()}-${Math.random().toString(36).slice(2)}`
+  );
+}
 
 export default function Page() {
   const [input, setInput] = useState("");
@@ -52,7 +80,7 @@ export default function Page() {
     setError(null);
     setMessages((current) => [
       ...current,
-      { id: crypto.randomUUID(), role: "user", content: trimmed },
+      { id: createMessageId(), role: "user", content: trimmed },
     ]);
     setInput("");
 
@@ -73,7 +101,7 @@ export default function Page() {
       setMessages((current) => [
         ...current,
         {
-          id: crypto.randomUUID(),
+          id: createMessageId(),
           role: "agent",
           content: data.result.stdout || "(no stdout)",
         },
@@ -84,7 +112,7 @@ export default function Page() {
       setError(message);
       setMessages((current) => [
         ...current,
-        { id: crypto.randomUUID(), role: "agent", content: `Error: ${message}` },
+        { id: createMessageId(), role: "agent", content: `Error: ${message}` },
       ]);
     } finally {
       setIsRunning(false);
@@ -206,6 +234,38 @@ function DebugPanel({ response }: { response: ChatResponse }) {
         <div className="debugValue">{result.cwd}</div>
       </div>
 
+      <h3>artifacts</h3>
+      <div className="debugGrid debugGridWide">
+        <div className="debugKey">taskPath</div>
+        <div className="debugValue">{response.artifacts.task.taskPath}</div>
+
+        <div className="debugKey">resultPath</div>
+        <div className="debugValue">{response.artifacts.result.path}</div>
+
+        <div className="debugKey">resultWritten</div>
+        <div
+          className={
+            response.artifacts.result.written ? "statusOk" : "statusBad"
+          }
+        >
+          {String(response.artifacts.result.written)}
+        </div>
+
+        <div className="debugKey">resultBytes</div>
+        <div className="debugValue">
+          {String(response.artifacts.result.sizeBytes)}
+        </div>
+
+        <div className="debugKey">handoffComplete</div>
+        <div
+          className={
+            response.artifacts.handoffComplete ? "statusOk" : "statusBad"
+          }
+        >
+          {String(response.artifacts.handoffComplete)}
+        </div>
+      </div>
+
       <h3>stderr</h3>
       <pre>{result.stderr || "(empty)"}</pre>
 
@@ -214,7 +274,9 @@ function DebugPanel({ response }: { response: ChatResponse }) {
 
       <h3>finalPrompt</h3>
       <pre>{response.finalPrompt}</pre>
+
+      <h3>result.md</h3>
+      <pre>{response.artifacts.result.content || "(missing)"}</pre>
     </>
   );
 }
-

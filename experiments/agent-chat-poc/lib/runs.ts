@@ -2,11 +2,13 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import type { AgentRunResult } from "./agents/types";
+import type { RunArtifacts } from "./artifacts";
 
 type SaveRunInput = {
   message: string;
   finalPrompt: string;
   result: AgentRunResult;
+  artifacts: RunArtifacts;
 };
 
 export async function saveRun(input: SaveRunInput) {
@@ -23,4 +25,3 @@ export async function saveRun(input: SaveRunInput) {
     "utf8",
   );
 }
-

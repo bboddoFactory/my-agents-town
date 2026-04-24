@@ -188,6 +188,10 @@ textarea {
   font-size: 14px;
 }
 
+.debugGridWide {
+  margin-top: 8px;
+}
+
 .debugKey {
   color: var(--muted);
   font-weight: 700;
@@ -248,4 +252,3 @@ pre {
     width: 100%;
   }
 }
-

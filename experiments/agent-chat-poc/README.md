@@ -9,7 +9,13 @@ This POC checks the smallest useful loop:
 [Next.js API route]
         |
         v
+[task.md artifact]
+        |
+        v
 [One-shot Codex CLI process]
+        |
+        v
+[result.md artifact]
         |
         v
 [stdout/stderr/debug result]
@@ -26,8 +32,9 @@ The first target is Codex CLI. The runner shape is kept generic enough to add Op
 
 For the broader direction and milestone context, read:
 
-- [Agent Orchestration Direction](../../docs/agent-orchestration-direction.md)
-- [Agent Chat POC Milestones](../../docs/agent-chat-poc-milestones.md)
+- [My-agents-town docs](../../docs/README.md)
+- [Vision](../../docs/vision.md)
+- [Agent chat POC experiment note](../../docs/experiments/agent-chat-poc.md)
 
 ## Non-Goals
 
@@ -43,7 +50,9 @@ For the broader direction and milestone context, read:
 Milestone A:
 
 - Web chat input.
-- Backend calls Codex CLI once.
+- Backend writes `artifacts/tasks/task-*/task.md`.
+- Backend calls Codex CLI once and points it at `task.md`.
+- Codex CLI writes `result.md` in the same task folder.
 - UI shows stdout as the agent answer.
 - UI shows debug details:
   - `ok`
@@ -55,6 +64,10 @@ Milestone A:
   - `args`
   - `cwd`
   - `timeoutMs`
+  - `taskPath`
+  - `resultPath`
+  - `resultWritten`
+  - `handoffComplete`
 - Each run is saved as `runs/*.json`.
 
 Small D smoke test:
@@ -68,7 +81,8 @@ Current POC sandboxing is only:
 
 ```text
 cwd = ./sandbox
-prompt prefix = "Only read or edit files in this directory."
+prompt instruction = "Only inspect or edit files in the sandbox workspace,
+except you may read task.md and write result.md."
 ```
 
 This is not a security boundary.
